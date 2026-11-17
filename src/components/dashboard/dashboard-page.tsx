@@ -132,7 +132,7 @@ export function DashboardPage() {
         </div>
         <div className="dashboard-visual-media">
           <Image
-            src="/images/ehteraf-therapy-hero.jpg"
+            src="/images/ehteraf-dashboard-doctor.jpg"
             alt=""
             fill
             priority
