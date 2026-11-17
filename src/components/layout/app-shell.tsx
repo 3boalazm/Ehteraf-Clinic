@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { WorkspaceProvider, useWorkspace } from "@/components/workspace/workspace-provider";
+import { ClinicDataProvider } from "@/services/clinic-data-provider";
 import type { Locale } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,9 @@ export function AppShell({
 }) {
   return (
     <WorkspaceProvider locale={locale}>
-      <ShellFrame>{children}</ShellFrame>
+      <ClinicDataProvider>
+        <ShellFrame>{children}</ShellFrame>
+      </ClinicDataProvider>
     </WorkspaceProvider>
   );
 }

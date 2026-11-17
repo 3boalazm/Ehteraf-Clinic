@@ -12,6 +12,8 @@ import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { UpcomingAppointments } from "@/components/dashboard/upcoming-appointments";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { useClinicData } from "@/services/clinic-data-provider";
+import { SEED_APPOINTMENTS, SEED_PATIENTS } from "@/lib/mock/clinic-seed";
 import { canAccessModule } from "@/lib/config/roles";
 import { BRANCHES } from "@/lib/mock/branches";
 import { messages } from "@/lib/i18n/messages";
@@ -21,6 +23,7 @@ import type { DateRange, ServiceFilter } from "@/types";
 export function DashboardPage() {
   const router = useRouter();
   const { locale, role, branchId } = useWorkspace();
+  const { appointments, patients } = useClinicData();
   const t = messages[locale].dashboard;
   const [range, setRange] = useState<DateRange>("month");
   const [service, setService] = useState<ServiceFilter>("all");
@@ -28,6 +31,21 @@ export function DashboardPage() {
     () => mockDashboardRepository.getOverview({ branchId, range, service, locale }),
     [branchId, locale, range, service],
   );
+  const liveMetrics = useMemo(() => {
+    const branchMatches = (id: string) => branchId === "all" || id === branchId;
+    const appointmentDelta = appointments.filter((item) => branchMatches(item.branchId)).length -
+      SEED_APPOINTMENTS.filter((item) => branchMatches(item.branchId)).length;
+    const patientDelta = patients.filter((item) => branchMatches(item.branchId)).length -
+      SEED_PATIENTS.filter((item) => branchMatches(item.branchId)).length;
+    return snapshot.metrics.map((metric) => ({
+      ...metric,
+      value: metric.id === "appointments"
+        ? Math.max(0, metric.value + appointmentDelta)
+        : metric.id === "newPatients"
+          ? Math.max(0, metric.value + patientDelta)
+          : metric.value,
+    }));
+  }, [appointments, branchId, patients, snapshot.metrics]);
   const currentBranch =
     branchId === "all"
       ? messages[locale].branches.all
@@ -108,7 +126,7 @@ export function DashboardPage() {
       </div>
 
       <MetricGrid
-        metrics={snapshot.metrics}
+        metrics={liveMetrics}
         locale={locale}
         labels={{
           revenue: t.totalRevenue,

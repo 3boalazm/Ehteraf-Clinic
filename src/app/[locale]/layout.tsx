@@ -5,6 +5,7 @@ import "@fontsource/ibm-plex-sans-arabic/arabic.css";
 import { AppShell } from "@/components/layout/app-shell";
 import type { Locale } from "@/types";
 import "../globals.css";
+import "../clinic.css";
 
 export const metadata: Metadata = {
   title: {

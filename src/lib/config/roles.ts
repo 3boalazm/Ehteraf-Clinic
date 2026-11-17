@@ -57,3 +57,11 @@ export const ROLE_ACCESS: Record<RoleId, ModuleId[]> = {
 export function canAccessModule(role: RoleId, module: ModuleId): boolean {
   return ROLE_ACCESS[role].includes(module);
 }
+
+export function canManagePatients(role: RoleId): boolean {
+  return role === "owner" || role === "branchManager" || role === "receptionist";
+}
+
+export function canBookAppointments(role: RoleId): boolean {
+  return role === "owner" || role === "branchManager" || role === "receptionist";
+}

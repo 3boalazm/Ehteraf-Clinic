@@ -85,3 +85,90 @@ export interface RecentActivity {
   initialsEn: string;
   accent: "teal" | "blue" | "violet" | "amber";
 }
+
+export type PatientStatus = "active" | "inactive";
+export type PatientGender = "male" | "female";
+export type AppointmentStatus =
+  | "booked"
+  | "confirmed"
+  | "checkedIn"
+  | "inSession"
+  | "completed"
+  | "cancelled"
+  | "noShow";
+export type VisitType = "clinic" | "home";
+
+export interface TreatmentEpisode {
+  id: string;
+  labelAr: string;
+  labelEn: string;
+  diagnosisAr: string;
+  diagnosisEn: string;
+  startedAt: string;
+  status: "active" | "discharged";
+}
+
+export interface ClinicPatient {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  phone: string;
+  email: string;
+  gender: PatientGender;
+  dateOfBirth: string;
+  branchId: Exclude<BranchId, "all">;
+  status: PatientStatus;
+  createdAt: string;
+  lastVisit: string | null;
+  sessionsTotal: number;
+  sessionsRemaining: number;
+  diagnosisAr: string;
+  diagnosisEn: string;
+  allergiesAr: string;
+  allergiesEn: string;
+  emergencyContact: string;
+  episodes: TreatmentEpisode[];
+}
+
+export interface ClinicAppointment {
+  id: string;
+  patientId: string;
+  branchId: Exclude<BranchId, "all">;
+  serviceId: string;
+  therapistId: string;
+  date: string;
+  time: string;
+  durationMinutes: number;
+  visitType: VisitType;
+  status: AppointmentStatus;
+  createdAt: string;
+}
+
+export interface ClinicService {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  categoryAr: string;
+  categoryEn: string;
+  durationMinutes: number;
+  price: number;
+}
+
+export interface ClinicTherapist {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  branchId: Exclude<BranchId, "all">;
+  specialtyAr: string;
+  specialtyEn: string;
+}
+
+export type NewPatientInput = Omit<
+  ClinicPatient,
+  "id" | "createdAt" | "lastVisit" | "sessionsTotal" | "sessionsRemaining" | "episodes"
+>;
+
+export type NewAppointmentInput = Omit<
+  ClinicAppointment,
+  "id" | "createdAt" | "durationMinutes" | "status"
+>;
