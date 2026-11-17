@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import {
   Area,
   AreaChart,
@@ -28,6 +29,8 @@ export function AppointmentTrendChart({
   appointmentsLabel: string;
   completedLabel: string;
 }) {
+  const gradientId = `appointment-${useId().replace(/:/g, "")}`;
+
   return (
     <Panel className="dashboard-panel">
       <div className="panel-heading">
@@ -50,11 +53,11 @@ export function AppointmentTrendChart({
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 9, right: 2, left: -21, bottom: 0 }}>
             <defs>
-              <linearGradient id="appointmentFill" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={`${gradientId}-appointments`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.22} />
                 <stop offset="92%" stopColor="hsl(var(--primary))" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="completedFill" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={`${gradientId}-completed`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="hsl(var(--blue))" stopOpacity={0.12} />
                 <stop offset="92%" stopColor="hsl(var(--blue))" stopOpacity={0} />
               </linearGradient>
@@ -105,8 +108,8 @@ export function AppointmentTrendChart({
               name={appointmentsLabel}
               stroke="hsl(var(--primary))"
               strokeWidth={2.4}
-              fill="url(#appointmentFill)"
-              activeDot={{ r: 4, strokeWidth: 0 }}
+              fill={`url(#${gradientId}-appointments)`}
+              activeDot={{ r: 4.5, strokeWidth: 2, stroke: "hsl(var(--card))" }}
             />
             <Area
               type="monotone"
@@ -114,8 +117,8 @@ export function AppointmentTrendChart({
               name={completedLabel}
               stroke="hsl(var(--blue))"
               strokeWidth={2}
-              fill="url(#completedFill)"
-              activeDot={{ r: 3.5, strokeWidth: 0 }}
+              fill={`url(#${gradientId}-completed)`}
+              activeDot={{ r: 4, strokeWidth: 2, stroke: "hsl(var(--card))" }}
             />
           </AreaChart>
         </ResponsiveContainer>

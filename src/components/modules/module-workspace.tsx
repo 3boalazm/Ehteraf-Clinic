@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import {
   Activity,
-  ArrowDownToLine,
   ArrowLeft,
   ArrowRight,
   BarChart3,
@@ -42,7 +41,7 @@ import { useWorkspace } from "@/components/workspace/workspace-provider";
 import { useClinicData } from "@/services/clinic-data-provider";
 import { BRANCHES } from "@/lib/mock/branches";
 import { DEMO_TODAY } from "@/lib/mock/clinic-seed";
-import { ROLE_BRANCH_SCOPE, ROLE_IDS } from "@/lib/config/roles";
+import { canAccessModule, ROLE_BRANCH_SCOPE, ROLE_IDS } from "@/lib/config/roles";
 import { messages, type Messages } from "@/lib/i18n/messages";
 import { workspaceCopy, type WorkspaceKey, type WorkspaceLocaleCopy, type WorkspacePageCopy } from "@/lib/i18n/workspace-copy";
 import { getWorkspaceRecords, type WorkspaceRecord, type WorkspaceStatus } from "@/lib/mock/workspace-data";
@@ -65,31 +64,73 @@ const MODULE_ICONS: Record<WorkspaceKey, LucideIcon> = {
   settings: Settings2,
 };
 
-const RELATED_LINKS: Partial<Record<WorkspaceKey, Array<{ href: string; ar: string; en: string }>>> = {
+type RelatedWorkspaceLink = { href: string; module: ModuleId; ar: string; en: string };
+
+const RELATED_LINKS: Partial<Record<WorkspaceKey, RelatedWorkspaceLink[]>> = {
+  branches: [
+    { href: "/reports", module: "reports", ar: "تحليلات الفروع", en: "Branch analytics" },
+    { href: "/inventory", module: "inventory", ar: "مخزون الفروع", en: "Branch inventory" },
+  ],
   clinical: [
-    { href: "/clinical", ar: "مراجعة التوثيق", en: "Documentation review" },
-    { href: "/treatment-plans", ar: "خطط العلاج", en: "Treatment plans" },
+    { href: "/treatment-plans", module: "clinical", ar: "خطط العلاج", en: "Treatment plans" },
+    { href: "/appointments", module: "appointments", ar: "جدول المواعيد", en: "Appointment schedule" },
+  ],
+  treatmentPlans: [
+    { href: "/clinical", module: "clinical", ar: "مراجعة التوثيق", en: "Documentation review" },
+    { href: "/services", module: "services", ar: "كتالوج الخدمات", en: "Service catalog" },
   ],
   services: [
-    { href: "/services", ar: "كتالوج الخدمات", en: "Service catalog" },
-    { href: "/packages", ar: "الباقات والبرامج", en: "Packages & programs" },
+    { href: "/packages", module: "services", ar: "الباقات والبرامج", en: "Packages & programs" },
+    { href: "/finance/invoices", module: "finance", ar: "الفواتير والتحصيل", en: "Invoices & collections" },
+  ],
+  packages: [
+    { href: "/services", module: "services", ar: "كتالوج الخدمات", en: "Service catalog" },
+    { href: "/finance/invoices", module: "finance", ar: "الفواتير والتحصيل", en: "Invoices & collections" },
+  ],
+  finance: [
+    { href: "/reports", module: "reports", ar: "تقارير التحصيل", en: "Collections reports" },
+    { href: "/procurement", module: "inventory", ar: "طلبات التوريد", en: "Supply requests" },
+  ],
+  inventory: [
+    { href: "/procurement", module: "inventory", ar: "طلبات التوريد", en: "Supply requests" },
+    { href: "/branches", module: "branches", ar: "نطاق الفروع", en: "Branch scope" },
+  ],
+  procurement: [
+    { href: "/inventory", module: "inventory", ar: "مستويات المخزون", en: "Stock levels" },
+    { href: "/finance/invoices", module: "finance", ar: "المراجعة المالية", en: "Finance review" },
   ],
   employees: [
-    { href: "/employees", ar: "دليل الفريق", en: "Team directory" },
-    { href: "/hr", ar: "نظرة الموارد البشرية", en: "People overview" },
+    { href: "/hr", module: "employees", ar: "نظرة الموارد البشرية", en: "People overview" },
+    { href: "/branches", module: "branches", ar: "تغطية الفروع", en: "Branch coverage" },
+  ],
+  reports: [
+    { href: "/finance/invoices", module: "finance", ar: "الفواتير والتحصيل", en: "Invoices & collections" },
+    { href: "/branches", module: "branches", ar: "تحليلات الفروع", en: "Branch analytics" },
+  ],
+  marketing: [
+    { href: "/notifications", module: "notifications", ar: "مركز الإشعارات", en: "Notification center" },
+    { href: "/reports", module: "reports", ar: "قياس الحملات", en: "Campaign reporting" },
+  ],
+  notifications: [
+    { href: "/appointments", module: "appointments", ar: "جدول المواعيد", en: "Appointment schedule" },
+    { href: "/clinical", module: "clinical", ar: "مراجعة التوثيق", en: "Documentation review" },
+  ],
+  settings: [
+    { href: "/branches", module: "branches", ar: "إدارة الفروع", en: "Branch management" },
+    { href: "/notifications", module: "notifications", ar: "تفضيلات التنبيه", en: "Notification preferences" },
   ],
 };
 
-const WORKSPACE_HERO_MEDIA: Partial<Record<WorkspaceKey, { src: string; captionAr: string; captionEn: string }>> = {
+const WORKSPACE_HERO_MEDIA: Record<WorkspaceKey, { src: string; captionAr: string; captionEn: string }> = {
   branches: {
     src: "/images/ehteraf-clinic-interior.jpg",
     captionAr: "مساحات ترحب بالرعاية",
     captionEn: "Spaces that welcome care",
   },
   clinical: {
-    src: "/images/ehteraf-rehab-equipment.jpg",
-    captionAr: "معدات تدعم الحركة",
-    captionEn: "Tools for better movement",
+    src: "/images/ehteraf-therapy-hero.jpg",
+    captionAr: "متابعة واعية في كل خطوة",
+    captionEn: "Thoughtful support at every step",
   },
   treatmentPlans: {
     src: "/images/ehteraf-rehab-equipment.jpg",
@@ -100,6 +141,51 @@ const WORKSPACE_HERO_MEDIA: Partial<Record<WorkspaceKey, { src: string; captionA
     src: "/images/ehteraf-rehab-equipment.jpg",
     captionAr: "مصممة لحركة أفضل",
     captionEn: "Designed for better movement",
+  },
+  packages: {
+    src: "/images/ehteraf-therapy-hero.jpg",
+    captionAr: "برامج تدعم رحلة الرعاية",
+    captionEn: "Programs that support care",
+  },
+  finance: {
+    src: "/images/ehteraf-clinic-interior.jpg",
+    captionAr: "رؤية أوضح لدورة الإيراد",
+    captionEn: "A clearer view of revenue flow",
+  },
+  inventory: {
+    src: "/images/ehteraf-rehab-equipment.jpg",
+    captionAr: "جاهزية تبدأ من التفاصيل",
+    captionEn: "Readiness starts in the details",
+  },
+  procurement: {
+    src: "/images/ehteraf-clinic-interior.jpg",
+    captionAr: "تشغيل مترابط عبر الفروع",
+    captionEn: "Connected operations across branches",
+  },
+  employees: {
+    src: "/images/ehteraf-clinic-interior.jpg",
+    captionAr: "فريق يصنع فرق الرعاية",
+    captionEn: "A team behind better care",
+  },
+  reports: {
+    src: "/images/ehteraf-therapy-hero.jpg",
+    captionAr: "صورة أوضح للأداء",
+    captionEn: "A clearer view of performance",
+  },
+  marketing: {
+    src: "/images/ehteraf-therapy-hero.jpg",
+    captionAr: "تواصل أقرب وأكثر إنسانية",
+    captionEn: "More thoughtful connections",
+  },
+  notifications: {
+    src: "/images/ehteraf-therapy-hero.jpg",
+    captionAr: "تحديثات تدعم تنسيق الرعاية",
+    captionEn: "Updates that support coordinated care",
+  },
+  settings: {
+    src: "/images/ehteraf-clinic-interior.jpg",
+    captionAr: "مساحة عمل متسقة للفريق",
+    captionEn: "A consistent workspace for the team",
   },
 };
 
@@ -120,6 +206,7 @@ interface WorkspaceMetric {
   hint: string;
   icon: LucideIcon;
   tone: "teal" | "blue" | "violet" | "amber";
+  progress?: number;
 }
 
 export function ModuleWorkspacePage({
@@ -247,7 +334,9 @@ export function ModuleWorkspacePage({
   const isSettings = key === "settings";
   const isBranches = key === "branches";
   const isNotifications = key === "notifications";
-  const relatedLinks = RELATED_LINKS[key] ?? [];
+  const relatedLinks = (RELATED_LINKS[key] ?? []).filter((item) =>
+    canAccessModule(role, item.module),
+  );
   const DirectionArrow = locale === "ar" ? ArrowLeft : ArrowRight;
 
   function showToast(message: string) {
@@ -365,30 +454,20 @@ export function ModuleWorkspacePage({
             <span className="workspace-record-context"><Layers size={13} />{formatNumber(scopedRecords.length, locale)} {copy.totalRecords}</span>
           </div>
         </div>
-        {heroMedia ? (
-          <div className="workspace-hero-art workspace-hero-media" aria-hidden="true">
-            <Image
-              src={heroMedia.src}
-              alt=""
-              fill
-              sizes="(max-width: 760px) 100vw, 200px"
-              className="workspace-hero-media-image"
-            />
-            <span className="workspace-hero-media-shade" />
-            <span className="workspace-hero-photo-caption">
-              <span className="workspace-hero-photo-icon"><Icon size={14} strokeWidth={1.7} /></span>
-              <span>{locale === "ar" ? heroMedia.captionAr : heroMedia.captionEn}</span>
-            </span>
-          </div>
-        ) : (
-          <div className="workspace-hero-art" aria-hidden="true">
-            <div className="workspace-art-orbit workspace-art-orbit-one" />
-            <div className="workspace-art-orbit workspace-art-orbit-two" />
-            <span className="workspace-art-mark"><Icon size={34} strokeWidth={1.4} /></span>
-            <div className="workspace-art-sparkline"><i /><i /><i /><i /><i /><i /><i /></div>
-            <span className="workspace-art-caption">EH / {key.slice(0, 4).toUpperCase()}</span>
-          </div>
-        )}
+        <div className="workspace-hero-art workspace-hero-media" aria-hidden="true">
+          <Image
+            src={heroMedia.src}
+            alt=""
+            fill
+            sizes="(max-width: 760px) 100vw, 200px"
+            className="workspace-hero-media-image"
+          />
+          <span className="workspace-hero-media-shade" />
+          <span className="workspace-hero-photo-caption">
+            <span className="workspace-hero-photo-icon"><Icon size={14} strokeWidth={1.7} /></span>
+            <span>{locale === "ar" ? heroMedia.captionAr : heroMedia.captionEn}</span>
+          </span>
+        </div>
         <div className="workspace-hero-actions">
           {!isSettings ? (
             <Button variant="outline" className="workspace-export-button" onClick={exportCurrentView}>
@@ -433,8 +512,19 @@ export function ModuleWorkspacePage({
                 <span className="workspace-metric-label">{metric.label}</span>
               </div>
               <strong className="workspace-metric-value" dir="auto">{metric.value}</strong>
+              {metric.progress !== undefined ? (
+                <span
+                  className="workspace-metric-progress"
+                  role="meter"
+                  aria-label={`${metric.label}: ${formatNumber(metric.progress, locale)}%`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={metric.progress}
+                >
+                  <span style={{ width: `${metric.progress}%` }} />
+                </span>
+              ) : null}
               <span className="workspace-metric-hint">{metric.hint}</span>
-              <span className="workspace-metric-corner" aria-hidden="true"><ArrowDownToLine size={13} /></span>
             </Panel>
           );
         })}
@@ -949,6 +1039,8 @@ function buildMetrics(
   const labels = copy.pages[key].metricLabels;
   const count = (value: number) => formatNumber(value, locale);
   const totalAmount = (rows: WorkspaceRecord[]) => rows.reduce((sum, record) => sum + (record.amount ?? 0), 0);
+  const ratio = (value: number, total: number) =>
+    total > 0 ? Math.round(Math.min(100, Math.max(0, (value / total) * 100))) : 0;
   const active = records.filter((record) => ACTIVE_STATUSES.has(record.status));
   const attention = records.filter((record) => ATTENTION_STATUSES.has(record.status));
   const completed = records.filter((record) => COMPLETE_STATUSES.has(record.status));
@@ -958,7 +1050,7 @@ function buildMetrics(
     !["cancelled", "noShow"].includes(appointment.status),
   );
   const scopedPatients = patients.filter((patient) => branchId === "all" || patient.branchId === branchId);
-  const metricValues: Array<{ value: string; hint: string }> = [];
+  const metricValues: Array<{ value: string; hint: string; progress?: number }> = [];
 
   switch (key) {
     case "branches": {
@@ -968,7 +1060,7 @@ function buildMetrics(
         { value: count(visibleBranches.length), hint: copy.branchScope },
         { value: count(scopedPatients.length), hint: copy.demoBadge },
         { value: count(scopedAppointments.length), hint: copy.appointmentsTodayLabel },
-        { value: `${count(occupancy)}%`, hint: copy.progressLabel },
+        { value: `${count(occupancy)}%`, hint: copy.progressLabel, progress: ratio(occupancy, 100) },
       );
       break;
     }
@@ -976,11 +1068,14 @@ function buildMetrics(
     case "treatmentPlans":
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(attention.length), hint: copy.filterAttention },
-        { value: count(completed.length), hint: copy.completed },
+        { value: count(attention.length), hint: copy.filterAttention, progress: ratio(attention.length, records.length) },
+        { value: count(completed.length), hint: copy.completed, progress: ratio(completed.length, records.length) },
         { value: count(records.reduce((sum, record) => sum + (record.units ?? 0), 0)), hint: locale === "ar" ? "جلسات ضمن العرض" : "Sessions in demo" },
       );
-      if (key === "clinical") metricValues[3] = { value: count(records.filter((record) => record.status === "attention").length), hint: copy.attention };
+      if (key === "clinical") {
+        const flaggedRecords = records.filter((record) => record.status === "attention").length;
+        metricValues[3] = { value: count(flaggedRecords), hint: copy.attention, progress: ratio(flaggedRecords, records.length) };
+      }
       break;
     case "services":
     case "packages": {
@@ -989,7 +1084,7 @@ function buildMetrics(
       const averagePrice = records.length ? Math.round(totalAmount(records) / records.length) : 0;
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(active.length), hint: copy.active },
+        { value: count(active.length), hint: copy.active, progress: ratio(active.length, records.length) },
         { value: key === "services" ? `${count(average)} ${locale === "ar" ? "دقيقة" : "min"}` : count(records.reduce((sum, record) => sum + (record.metric ?? 0), 0)), hint: key === "services" ? copy.pages.services.metricLabels[2] : copy.pages.packages.metricLabels[2] },
         { value: formatCurrency(averagePrice, locale), hint: copy.pages[key].metricLabels[3] },
       );
@@ -1001,20 +1096,21 @@ function buildMetrics(
       const overdue = records.filter((record) => record.status === "attention");
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: formatCurrency(totalAmount(due), locale), hint: copy.pending },
-        { value: formatCurrency(totalAmount(collected), locale), hint: copy.completed },
-        { value: count(overdue.length), hint: copy.attention },
+        { value: formatCurrency(totalAmount(due), locale), hint: copy.pending, progress: ratio(totalAmount(due), totalAmount(records)) },
+        { value: formatCurrency(totalAmount(collected), locale), hint: copy.completed, progress: ratio(totalAmount(collected), totalAmount(records)) },
+        { value: count(overdue.length), hint: copy.attention, progress: ratio(overdue.length, records.length) },
       );
       break;
     }
     case "inventory": {
       const units = records.reduce((sum, record) => sum + (record.metric ?? 0), 0);
+      const lowStock = records.filter((record) => record.status === "lowStock" || record.status === "attention").length;
       const onOrder = records.filter((record) => record.status === "pending" || record.status === "inProgress").length;
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(records.filter((record) => record.status === "lowStock" || record.status === "attention").length), hint: copy.lowStock },
+        { value: count(lowStock), hint: copy.lowStock, progress: ratio(lowStock, records.length) },
         { value: count(units), hint: locale === "ar" ? "وحدة في بيانات العرض" : "Units in demo data" },
-        { value: count(onOrder), hint: copy.inProgress },
+        { value: count(onOrder), hint: copy.inProgress, progress: ratio(onOrder, records.length) },
       );
       break;
     }
@@ -1022,8 +1118,8 @@ function buildMetrics(
       const awaiting = records.filter((record) => record.status === "pending" || record.status === "review");
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(awaiting.length), hint: copy.filterAttention },
-        { value: count(completed.length), hint: copy.completed },
+        { value: count(awaiting.length), hint: copy.filterAttention, progress: ratio(awaiting.length, records.length) },
+        { value: count(completed.length), hint: copy.completed, progress: ratio(completed.length, records.length) },
         { value: formatCurrency(totalAmount(records), locale), hint: locale === "ar" ? "قيمة اصطناعية" : "Synthetic value" },
       );
       break;
@@ -1034,37 +1130,41 @@ function buildMetrics(
       metricValues.push(
         { value: count(records.length), hint: copy.demoBadge },
         { value: count(specialties.size), hint: locale === "ar" ? "تخصصات في العينة" : "Specialties in sample" },
-        { value: count(active.length), hint: copy.active },
+        { value: count(active.length), hint: copy.active, progress: ratio(active.length, records.length) },
         { value: count(representedBranches.size), hint: locale === "ar" ? "فروع ممثلة في العينة" : "Branches represented" },
       );
       break;
     }
-    case "reports":
+    case "reports": {
+      const readyReports = records.filter((record) => record.status === "completed" || record.status === "active").length;
+      const scheduledReports = records.filter((record) => record.status === "scheduled").length;
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(records.filter((record) => record.status === "completed" || record.status === "active").length), hint: copy.active },
-        { value: count(records.filter((record) => record.status === "scheduled").length), hint: copy.scheduled },
-        { value: count(completed.length), hint: copy.completed },
+        { value: count(readyReports), hint: copy.active, progress: ratio(readyReports, records.length) },
+        { value: count(scheduledReports), hint: copy.scheduled, progress: ratio(scheduledReports, records.length) },
+        { value: count(completed.length), hint: copy.completed, progress: ratio(completed.length, records.length) },
       );
       break;
+    }
     case "marketing": {
       const audience = records.reduce((sum, record) => sum + (record.audience ?? 0), 0);
       const engagementRows = records.filter((record) => record.metric !== undefined);
       const engagement = engagementRows.length ? engagementRows.reduce((sum, record) => sum + (record.metric ?? 0), 0) / engagementRows.length : 0;
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(active.length), hint: copy.active },
+        { value: count(active.length), hint: copy.active, progress: ratio(active.length, records.length) },
         { value: count(audience), hint: locale === "ar" ? "وصول تقديري اصطناعي" : "Synthetic estimated reach" },
-        { value: `${engagement.toFixed(1)}%`, hint: locale === "ar" ? "تفاعل تجريبي" : "Demo engagement" },
+        { value: `${engagement.toFixed(1)}%`, hint: locale === "ar" ? "تفاعل تجريبي" : "Demo engagement", progress: ratio(engagement, 100) },
       );
       break;
     }
     case "notifications": {
       const appointmentAlerts = records.filter((record) => record.categoryEn.toLowerCase().includes("appointment")).length;
       const taskAlerts = records.filter((record) => record.categoryEn.toLowerCase().includes("task") || record.categoryEn.toLowerCase().includes("inventory")).length;
+      const unread = records.filter((record) => record.status === "unread").length;
       metricValues.push(
         { value: count(records.length), hint: copy.totalRecords },
-        { value: count(records.filter((record) => record.status === "unread").length), hint: copy.unread },
+        { value: count(unread), hint: copy.unread, progress: ratio(unread, records.length) },
         { value: count(appointmentAlerts), hint: locale === "ar" ? "تنبيهات مواعيد العرض" : "Demo appointment alerts" },
         { value: count(taskAlerts), hint: locale === "ar" ? "مهام تشغيلية تجريبية" : "Demo operations tasks" },
       );
@@ -1086,6 +1186,7 @@ function buildMetrics(
     label: labels[index],
     value: entry.value,
     hint: entry.hint,
+    progress: entry.progress,
     icon: icons[index],
     tone: tones[index],
   }));
