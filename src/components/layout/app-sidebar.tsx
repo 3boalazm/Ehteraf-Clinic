@@ -85,7 +85,13 @@ export function AppSidebar() {
                 const active =
                   item.id === "dashboard"
                     ? pathname === href
-                    : pathname === href || pathname.startsWith(`${href}/`);
+                    : item.id === "clinical"
+                      ? pathname.startsWith(`/${locale}/clinical`) || pathname.startsWith(`/${locale}/treatment-plans`)
+                      : item.id === "services"
+                        ? pathname.startsWith(`/${locale}/services`) || pathname.startsWith(`/${locale}/packages`)
+                        : item.id === "employees"
+                          ? pathname.startsWith(`/${locale}/employees`) || pathname.startsWith(`/${locale}/hr`)
+                          : pathname === href || pathname.startsWith(`${href}/`);
                 const Icon = item.icon;
                 return (
                   <li key={item.id}>

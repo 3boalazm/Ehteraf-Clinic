@@ -7,6 +7,7 @@ import type { Locale } from "@/types";
 import "../globals.css";
 import "../clinic.css";
 import "../reference-theme.css";
+import "../module-suite.css";
 
 export const metadata: Metadata = {
   title: {
