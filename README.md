@@ -1,6 +1,6 @@
-# Ehteraf Clinic — M1 Core Clinic Experience
+# Ehteraf Clinic — Multi-module Clinic Platform Prototype
 
-Bilingual (Arabic RTL / English LTR) front-end prototype for a multi-branch physical therapy management platform. M0 establishes the deployable application shell and executive dashboard; M1 adds the patient and scheduling workflows. Everything is mock-driven, and no real patient data or backend integrations are used.
+Bilingual (Arabic RTL / English LTR) front-end prototype for an extensible, multi-branch physical therapy management platform. The app includes an executive dashboard, patient and scheduling workflows, and a connected set of operational module workspaces. Everything is mock-driven; there are no backend integrations or real patient records.
 
 ## Included
 
@@ -10,13 +10,14 @@ Bilingual (Arabic RTL / English LTR) front-end prototype for a multi-branch phys
 - Responsive, collapsible navigation shell, demo role switcher, role-scoped navigation, and access-denied states.
 - Three provisional branches: Al Ghadeer, Al Dar Al Baida, and Al Quwayiyah (confirm names against operating data).
 - Executive dashboard with branch, date-range, and service filters; revenue, collections, appointments, patients, operational metrics, a selectable month overview, today’s clinician roster, and recent activity.
-- Reference-led visual system: dark collapsible navigation rail, restrained clinical-neutral surfaces, teal primary actions, limited blue/lavender/lime accents, consistent responsive cards, and RTL/LTR-aware layouts across the shell, dashboard, patient, appointment, calendar, and placeholder routes.
+- Refreshed responsive visual system: dark collapsible navigation rail, premium gradient workspace headers, clinical-neutral surfaces, teal primary actions, restrained blue/lavender/lime accents, consistent data tables/cards, and RTL/LTR-aware layouts across all routes.
 - Image-by-image audit of all 20 supplied references, including exact duplicate groups, visible aggregate dashboard data, reusable patterns, and privacy/scope guardrails: [Design reference analysis](docs/design-reference-analysis.md).
 - Patient directory with search, filters, CSV export, pagination, profile creation/editing, and a Patient 360 profile with overview, medical, episode, appointment, package, financial, and document tabs.
 - Appointment directory with attendance/session status actions, cancellation, rescheduling, and a booking workflow that checks therapist/slot conflicts.
 - Day, week, and month calendar views. New patients and appointments are saved to browser local storage and appear in the other clinic pages.
 - Mock repository adapter with 100 synthetic patients and 200 synthetic appointments. Branch, role, theme, sidebar, and clinic demo data are kept in browser storage; owner demo can restore the seed data.
-- Future feature routes show a clear “coming soon” state instead of a broken page.
+- Activated mock-driven workspaces for branches, clinical review, treatment plans, services, packages, invoices/collections, inventory, procurement, employees, reports, marketing, notifications, and settings. Shared workspace tools include search, status filters, branch scope, local demo creation/status changes, CSV export, and responsive bilingual layouts.
+- Workspace settings connect to the existing local branch, role, theme, language, and sidebar controls. Role and access behavior remains a visual simulation, not security.
 
 ## Run locally
 

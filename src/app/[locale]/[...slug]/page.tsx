@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { ModulePlaceholder } from "@/components/modules/module-placeholder";
+import { ModuleGate } from "@/components/modules/module-gate";
+import { ModuleWorkspacePage } from "@/components/modules/module-workspace";
 import { getModuleFromPath } from "@/lib/config/navigation";
 
 export default async function ModuleRoute({
@@ -12,7 +13,11 @@ export default async function ModuleRoute({
 
   const path = slug.join("/");
   const moduleId = getModuleFromPath(path);
-  if (!moduleId) notFound();
+  if (!moduleId || moduleId === "appointments" || moduleId === "patients") notFound();
 
-  return <ModulePlaceholder module={moduleId} path={path} />;
+  return (
+    <ModuleGate module={moduleId} path={path}>
+      <ModuleWorkspacePage key={path} module={moduleId} path={path} />
+    </ModuleGate>
+  );
 }
