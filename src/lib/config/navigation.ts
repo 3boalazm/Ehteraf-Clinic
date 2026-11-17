@@ -58,6 +58,13 @@ export const NAVIGATION: NavigationSection[] = [
         module: "appointments",
       },
       {
+        id: "calendar",
+        labelKey: "calendar",
+        href: "/calendar",
+        icon: CalendarDays,
+        module: "appointments",
+      },
+      {
         id: "patients",
         labelKey: "patients",
         href: "/patients",
