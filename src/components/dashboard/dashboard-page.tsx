@@ -6,6 +6,7 @@ import { CalendarPlus, FileDown, CalendarDays, Stethoscope, ShieldCheck } from "
 import { Button } from "@/components/ui/button";
 import { SelectField } from "@/components/ui/select-field";
 import { AppointmentTrendChart } from "@/components/dashboard/appointment-trend-chart";
+import { AppointmentOverview, TodayClinicians } from "@/components/dashboard/appointment-overview";
 import { MetricGrid } from "@/components/dashboard/metric-grid";
 import { OperationsSummary } from "@/components/dashboard/operations-summary";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
@@ -143,7 +144,7 @@ export function DashboardPage() {
         }}
       />
 
-      <div className="dashboard-widget-grid">
+      <div className="dashboard-widget-grid dashboard-widget-grid-overview">
         <RevenueChart
           data={snapshot.branchRevenue}
           locale={locale}
@@ -152,6 +153,22 @@ export function DashboardPage() {
           invoicedLabel={t.invoiced}
           collectedLabel={t.collected}
         />
+        <AppointmentOverview />
+      </div>
+
+      <div className="dashboard-widget-grid dashboard-widget-grid-secondary">
+        <AppointmentTrendChart
+          data={snapshot.appointmentTrend}
+          locale={locale}
+          title={t.appointmentTrend}
+          description={t.appointmentTrendHint}
+          appointmentsLabel={t.totalAppointments}
+          completedLabel={t.completed}
+        />
+        <UpcomingAppointments />
+      </div>
+
+      <div className="dashboard-widget-grid dashboard-widget-grid-tertiary">
         <OperationsSummary
           noShowRate={snapshot.noShowRate}
           occupancy={snapshot.occupancy}
@@ -167,21 +184,9 @@ export function DashboardPage() {
             pendingReportsDescription: t.pendingReportsDescription,
           }}
         />
+        <RecentActivity />
+        <TodayClinicians />
       </div>
-
-      <div className="dashboard-widget-grid dashboard-widget-grid-secondary">
-        <AppointmentTrendChart
-          data={snapshot.appointmentTrend}
-          locale={locale}
-          title={t.appointmentTrend}
-          description={t.appointmentTrendHint}
-          appointmentsLabel={t.totalAppointments}
-          completedLabel={t.completed}
-        />
-        <UpcomingAppointments />
-      </div>
-
-      <RecentActivity />
 
       <div className="demo-banner">
         <ShieldCheck size={15} />

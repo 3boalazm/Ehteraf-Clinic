@@ -6,6 +6,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import type { Locale } from "@/types";
 import "../globals.css";
 import "../clinic.css";
+import "../reference-theme.css";
 
 export const metadata: Metadata = {
   title: {

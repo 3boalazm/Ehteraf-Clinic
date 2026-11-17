@@ -5,20 +5,29 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, CircleHelp, HeartPulse } from "lucide-react";
 import { getNavigationForRole } from "@/lib/config/navigation";
 import { messages } from "@/lib/i18n/messages";
+import { useClinicData } from "@/services/clinic-data-provider";
+import { DEMO_TODAY } from "@/lib/mock/clinic-seed";
+import { cn, formatNumber } from "@/lib/utils";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
-import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const {
     locale,
     role,
+    branchId,
     sidebarCollapsed,
     setSidebarCollapsed,
     mobileOpen,
     setMobileOpen,
   } = useWorkspace();
   const t = messages[locale];
+  const { appointments } = useClinicData();
+  const todayAppointmentCount = appointments.filter(
+    (appointment) => appointment.date === DEMO_TODAY &&
+      (branchId === "all" || appointment.branchId === branchId) &&
+      !["cancelled", "noShow"].includes(appointment.status),
+  ).length;
   const navigation = getNavigationForRole(role);
   const sectionLabels = t.nav as Record<string, string>;
   const itemLabels = t.nav as Record<string, string>;
@@ -85,14 +94,19 @@ export function AppSidebar() {
                       onClick={() => setMobileOpen(false)}
                       className={cn("sidebar-link", active && "sidebar-link-active")}
                       aria-current={active ? "page" : undefined}
+                      aria-label={item.id === "appointments" && todayAppointmentCount > 0
+                        ? t.nav.appointmentsTodayCount.replace("{count}", formatNumber(todayAppointmentCount, locale))
+                        : undefined}
                       title={sidebarCollapsed ? itemLabels[item.labelKey] : undefined}
                     >
                       <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
                       <span className="sidebar-link-label">
                         {itemLabels[item.labelKey]}
                       </span>
-                      {item.id === "appointments" && !sidebarCollapsed ? (
-                        <span className="sidebar-count">8</span>
+                      {item.id === "appointments" && !sidebarCollapsed && todayAppointmentCount > 0 ? (
+                        <span className="sidebar-count" aria-hidden="true">
+                          {formatNumber(todayAppointmentCount, locale)}
+                        </span>
                       ) : null}
                     </Link>
                   </li>
