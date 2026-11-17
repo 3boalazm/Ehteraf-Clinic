@@ -215,3 +215,18 @@ There are **14 unique screenshot compositions** across the 20 filenames. The two
 - Do not reuse reference brands/logos (MEDIX, Dr+, Med.+, CityCare, Dynamics 365, creditkarma, Salesforce, etc.), staff portraits, patient names, diagnoses, clinical history, treatment values, or finance/account figures.
 - Do not treat any displayed sample counts or colors as approved Ehteraf operational data. Current branch names and role assignments remain provisional.
 - Keep the application frontend-only and mock-driven. Role/access behavior remains a UI simulation, not authorization/security.
+
+---
+
+## Supplementary module-workspace references
+
+**Source:** the user-supplied [`codeandcanvas-native/REF` folder](https://github.com/3boalazm/codeandcanvas-native/tree/main/REF). Eight representative image files were visually reviewed on 17 November 2026. They are broad product-design inspiration, not clinic specifications or a source of operational data.
+
+- **`Cards.jpg`:** offset image cards with concise titles and capsule tags. Borrow the compact card rhythm and rounded tags, not the topic cards or their product identity.
+- **`Chart snippet by Mohammed Kabir Hussaini _ Layers.jpg`:** a soft, continuous curve with a clear focus point and a value callout. Use similar chart restraint only when the underlying time-series data is real and meaningful.
+- **`Progress Bar.jpg`:** strong headline count, a clearly segmented progress bar, and a short contextual summary. Adapt this to workspace counters where a valid numerator/denominator exists; do not imply progress for unrelated raw totals.
+- **`ui component.jpg`:** large summary total, active filter tabs, and a simple highlighted chart point. Keep filters and counts close to the workspace content they control.
+- **`ui.jpg` and `visual inspo AI idea.jpg`:** image-led cards with rounded photography and a restrained caption/action overlay. Use clinic imagery and non-identifying care/space imagery, never reference portraits or patient content.
+- **`3 layer stack diagram template...jpg` and `Week on Journal - summary card.jpg`:** layered visual hierarchy and stacked weekly summaries. Translate these into a clear sequence of workspace context, insight, and detailed records instead of copying the diagrams or sample content.
+
+The module-workspace pass uses role-aware related-workspace links, progress tracks only for metrics with interpretable ratios, and clinic-specific hero images. Dashboard chart gradients now have per-instance SVG IDs so multiple chart instances cannot collide. Reference data, branding, and personal imagery are not copied.
