@@ -28,7 +28,7 @@ export function AppShell({
 function ShellFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { locale, mobileOpen, setMobileOpen } = useWorkspace();
-  const isDashboard = pathname.replace(/\\/+$/, "") === `/${locale}/dashboard`;
+  const isDashboard = pathname === `/${locale}/dashboard` || pathname === `/${locale}/dashboard/`;
 
   useEffect(() => {
     if (!mobileOpen) return;
