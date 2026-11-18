@@ -101,18 +101,33 @@ input:focus-visible {
 }
 
 .app-sidebar {
-  position: sticky;
-  z-index: 40;
-  top: 0;
+  position: fixed;
+  z-index: 60;
+  inset-block: 0;
+  inset-inline-start: 0;
   display: flex;
-  width: 262px;
-  min-width: 262px;
+  width: min(304px, calc(100vw - 28px));
+  min-width: min(304px, calc(100vw - 28px));
   height: 100vh;
   height: 100dvh;
   flex-direction: column;
   border-inline-end: 1px solid hsl(var(--border));
   background: hsl(var(--card));
-  transition: width 180ms ease, min-width 180ms ease, transform 220ms ease;
+  box-shadow: 0 24px 80px hsl(220 35% 10% / .2);
+  visibility: hidden;
+  transform: translateX(-105%);
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), visibility 0s linear 260ms;
+  will-change: transform;
+}
+
+[dir="rtl"] .app-sidebar {
+  transform: translateX(105%);
+}
+
+.app-sidebar-mobile-open {
+  visibility: visible;
+  transform: translateX(0);
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), visibility 0s;
 }
 
 .app-sidebar-collapsed {
@@ -127,6 +142,31 @@ input:focus-visible {
   justify-content: space-between;
   gap: 12px;
   padding: 0 18px;
+}
+
+.sidebar-close-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border: 1px solid hsl(var(--border));
+  border-radius: 11px;
+  background: hsl(var(--background));
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.sidebar-close-button:hover {
+  border-color: hsl(var(--primary) / .3);
+  background: hsl(var(--primary) / .07);
+  color: hsl(var(--foreground));
+}
+
+.sidebar-close-button:focus-visible {
+  outline: 3px solid hsl(var(--ring) / .3);
+  outline-offset: 2px;
 }
 
 .sidebar-brand {
@@ -614,7 +654,27 @@ input:focus-visible {
 }
 
 .mobile-menu-button {
-  display: none;
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  box-shadow: 0 2px 8px hsl(220 35% 10% / .04);
+}
+
+.mobile-menu-button:hover {
+  border-color: hsl(var(--primary) / .35);
+  background: hsl(var(--primary) / .06);
+}
+
+.mobile-menu-button:focus-visible {
+  outline: 3px solid hsl(var(--ring) / .3);
+  outline-offset: 2px;
 }
 
 .notification-popover {
@@ -771,7 +831,20 @@ input:focus-visible {
 }
 
 .sidebar-backdrop {
-  display: none;
+  position: fixed;
+  z-index: 55;
+  inset: 0;
+  display: block;
+  border: 0;
+  background: hsl(220 35% 10% / .42);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  animation: sidebar-backdrop-in 180ms ease both;
+}
+
+@keyframes sidebar-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .app-main {
@@ -1722,98 +1795,6 @@ input:focus-visible {
 }
 
 @media (max-width: 1023px) {
-  .app-sidebar {
-    position: fixed;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: 286px;
-    min-width: 286px;
-    box-shadow: 0 14px 45px hsl(220 35% 10% / 0.14);
-  }
-
-  .app-sidebar-collapsed {
-    width: 286px;
-    min-width: 286px;
-  }
-
-  .app-sidebar-mobile-closed {
-    transform: translateX(-105%);
-  }
-
-  [dir="rtl"] .app-sidebar-mobile-closed {
-    transform: translateX(105%);
-  }
-
-  .app-sidebar-mobile-open {
-    transform: translateX(0);
-  }
-
-  .app-sidebar .brand-copy,
-  .app-sidebar .sidebar-collapse-button,
-  .app-sidebar .sidebar-section-label,
-  .app-sidebar .sidebar-link-label,
-  .app-sidebar .sidebar-count,
-  .app-sidebar .sidebar-footer-copy,
-  .app-sidebar .demo-indicator {
-    display: initial;
-  }
-
-  .app-sidebar .brand-copy,
-  .app-sidebar .sidebar-footer-copy {
-    display: flex;
-  }
-
-  .app-sidebar .sidebar-section-label {
-    display: block;
-  }
-
-  .app-sidebar .sidebar-link-label {
-    display: inline;
-  }
-
-  .app-sidebar .sidebar-count,
-  .app-sidebar .sidebar-collapse-button {
-    display: grid;
-  }
-
-  .app-sidebar .demo-indicator {
-    display: block;
-  }
-
-  .app-sidebar .sidebar-brand-row {
-    justify-content: space-between;
-    padding-inline: 18px;
-  }
-
-  .app-sidebar .sidebar-navigation {
-    padding-inline: 13px;
-  }
-
-  .app-sidebar .sidebar-link {
-    justify-content: flex-start;
-    padding-inline: 11px;
-  }
-
-  .app-sidebar .sidebar-footer {
-    justify-content: flex-start;
-    padding: 12px 10px;
-  }
-
-  .sidebar-backdrop {
-    position: fixed;
-    z-index: 35;
-    inset: 0;
-    display: block;
-    border: 0;
-    background: hsl(220 35% 10% / 0.38);
-    cursor: pointer;
-    backdrop-filter: blur(2px);
-  }
-
-  .mobile-menu-button {
-    display: inline-flex;
-  }
-
   .app-header {
     min-height: 68px;
   }

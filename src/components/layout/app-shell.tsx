@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
@@ -27,23 +27,40 @@ export function AppShell({
 
 function ShellFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { locale, mobileOpen, setMobileOpen, sidebarCollapsed } = useWorkspace();
-  const isDashboard = pathname.replace(/\/+$/, "") === `/${locale}/dashboard`;
+  const { locale, mobileOpen, setMobileOpen } = useWorkspace();
+  const isDashboard = pathname === `/${locale}/dashboard` || pathname === `/${locale}/dashboard/`;
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setMobileOpen(false);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen, setMobileOpen]);
 
   return (
     <div className={cn("app-frame", isDashboard && "app-frame-spatial")}>
       <div className="app-layout">
-        <AppSidebar />
-        <div className={cn("app-content", sidebarCollapsed && "app-content-expanded")}>
+        <div className="app-content">
           <AppHeader />
           <main className="app-main">{children}</main>
         </div>
       </div>
+      <AppSidebar />
       {mobileOpen ? (
         <button
           type="button"
           className="sidebar-backdrop"
-          aria-label="Close navigation"
+          aria-label={locale === "ar" ? "إغلاق القائمة" : "Close navigation"}
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
