@@ -9,7 +9,7 @@ export function Panel({ className, children, ...props }: PanelProps) {
   return (
     <section
       className={cn(
-        "rounded-2xl border border-border bg-card shadow-card",
+        "ui-panel rounded-2xl border border-border bg-card shadow-card",
         className,
       )}
       {...props}
