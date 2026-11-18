@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight, CircleHelp, HeartPulse } from "lucide-react";
+import { CircleHelp, HeartPulse } from "lucide-react";
 import { getNavigationForRole } from "@/lib/config/navigation";
 import { messages } from "@/lib/i18n/messages";
 import { useClinicData } from "@/services/clinic-data-provider";
@@ -56,21 +56,6 @@ export function AppSidebar() {
             <span className="brand-caption">{t.app.product}</span>
           </span>
         </Link>
-        <button
-          className="sidebar-collapse-button"
-          type="button"
-          onClick={() => setSidebarCollapsed((current) => !current)}
-          aria-label={sidebarCollapsed ? t.app.expandSidebar : t.app.collapseSidebar}
-          title={sidebarCollapsed ? t.app.expandSidebar : t.app.collapseSidebar}
-        >
-          {sidebarCollapsed ? (
-            locale === "ar" ? <ChevronLeft size={17} /> : <ChevronRight size={17} />
-          ) : locale === "ar" ? (
-            <ChevronRight size={17} />
-          ) : (
-            <ChevronLeft size={17} />
-          )}
-        </button>
       </div>
 
       <nav className="sidebar-navigation">
@@ -109,7 +94,7 @@ export function AppSidebar() {
                       <span className="sidebar-link-label">
                         {itemLabels[item.labelKey]}
                       </span>
-                      {item.id === "appointments" && !sidebarCollapsed && todayAppointmentCount > 0 ? (
+                      {item.id === "appointments" && todayAppointmentCount > 0 ? (
                         <span className="sidebar-count" aria-hidden="true">
                           {formatNumber(todayAppointmentCount, locale)}
                         </span>
