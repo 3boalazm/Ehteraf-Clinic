@@ -144,6 +144,31 @@ input:focus-visible {
   padding: 0 18px;
 }
 
+.sidebar-close-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border: 1px solid hsl(var(--border));
+  border-radius: 11px;
+  background: hsl(var(--background));
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.sidebar-close-button:hover {
+  border-color: hsl(var(--primary) / .3);
+  background: hsl(var(--primary) / .07);
+  color: hsl(var(--foreground));
+}
+
+.sidebar-close-button:focus-visible {
+  outline: 3px solid hsl(var(--ring) / .3);
+  outline-offset: 2px;
+}
+
 .sidebar-brand {
   display: flex;
   min-width: 0;
