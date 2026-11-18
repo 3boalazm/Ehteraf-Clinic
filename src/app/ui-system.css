@@ -515,3 +515,20 @@ button:not(:disabled) { cursor: pointer; }
   .workspace-metrics-grid { grid-template-columns: minmax(0, 1fr); }
   .data-table th, .data-table td, .workspace-data-table th, .workspace-data-table td { padding: 10px 11px; }
 }
+
+/* Shared primitive hooks */
+.ui-panel {
+  border: 1px solid hsl(var(--border) / .92);
+  border-radius: var(--ui-radius-lg);
+  background: hsl(var(--card));
+  box-shadow: var(--ui-shadow-card);
+}
+.ui-button {
+  min-height: 40px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: -.005em;
+}
+.ui-button:focus-visible { outline: 0; box-shadow: 0 0 0 4px hsl(var(--ring) / .18); }
+.ui-button:disabled { transform: none; box-shadow: none; }
