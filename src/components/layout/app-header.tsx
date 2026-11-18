@@ -51,6 +51,8 @@ export function AppHeader() {
           className="mobile-menu-button"
           onClick={() => setMobileOpen((current) => !current)}
           aria-label={mobileOpen ? t.app.closeMenu : t.app.openMenu}
+          aria-controls="primary-navigation"
+          aria-expanded={mobileOpen}
         >
           {mobileOpen ? <X size={19} /> : <Menu size={20} />}
         </Button>
