@@ -47,6 +47,22 @@
     hsl(var(--background));
 }
 
+.app-frame-spatial .mobile-menu-button {
+  border-color: hsl(var(--border) / .9);
+  background: hsl(var(--card) / .92);
+  color: hsl(var(--foreground));
+  box-shadow: 0 5px 18px hsl(var(--shadow-tint) / .07);
+}
+
+.app-frame-spatial .mobile-menu-button:hover {
+  border-color: hsl(var(--primary) / .4);
+  background: hsl(var(--primary) / .07);
+}
+
+.app-frame-spatial .app-sidebar {
+  border-inline-end-color: hsl(var(--border) / .9);
+}
+
 .app-frame-spatial .app-content {
   background: transparent;
 }
