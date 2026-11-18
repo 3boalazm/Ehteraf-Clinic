@@ -9,6 +9,7 @@ import "../clinic.css";
 import "../reference-theme.css";
 import "../module-suite.css";
 import "../spatial-dashboard.css";
+import "../ui-system.css";
 
 export const metadata: Metadata = {
   title: {
@@ -25,8 +26,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f8f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#111a20" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f7f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#11161b" },
   ],
 };
 
