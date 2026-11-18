@@ -442,14 +442,6 @@ button[class~="rounded-xl"] {
   height: 224px;
 }
 
-.operations-live-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: hsl(var(--lime));
-  box-shadow: 0 0 0 4px hsl(var(--lime) / .15);
-}
-
 .chart-tooltip {
   border-radius: 12px;
   box-shadow: 0 12px 32px hsl(var(--shadow-tint) / .14);

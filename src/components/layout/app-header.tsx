@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Languages, MapPin, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { Bell, Info, Languages, MapPin, Menu, Moon, Search, Sun, UserRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SelectField } from "@/components/ui/select-field";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
@@ -154,8 +154,7 @@ export function AppHeader() {
             aria-label={t.app.notifications}
             aria-expanded={notificationsOpen}
           >
-            <Bell size={19} />
-            <span className="notification-dot" />
+            <Bell size={19} aria-hidden="true" />
           </Button>
           {notificationsOpen ? (
             <div className="notification-popover" role="dialog" aria-label={t.app.notifications}>
@@ -164,27 +163,16 @@ export function AppHeader() {
                   <strong>{t.app.notifications}</strong>
                   <span>{t.notifications.title}</span>
                 </div>
-                <span className="notification-count">3</span>
               </div>
               <div className="notification-list">
-                <NotificationItem
-                  title={t.notifications.payment}
-                  time={t.notifications.now}
-                  icon="payment"
-                  locale={locale}
-                />
-                <NotificationItem
-                  title={t.notifications.appointment}
-                  time={t.notifications.minutes15}
-                  icon="appointment"
-                  locale={locale}
-                />
-                <NotificationItem
-                  title={t.notifications.reports}
-                  time={t.notifications.hour1}
-                  icon="report"
-                  locale={locale}
-                />
+                <div className="notification-item notification-demo-note">
+                  <span className="notification-item-icon notification-demo" aria-hidden="true">
+                    <Info size={16} />
+                  </span>
+                  <div className="notification-item-copy">
+                    <span>{t.notifications.demoNotice}</span>
+                  </div>
+                </div>
               </div>
               <button
                 className="notification-view-all"
@@ -200,45 +188,10 @@ export function AppHeader() {
           ) : null}
         </div>
 
-        <div className="header-avatar" aria-label={t.app.greeting} title={t.app.greeting}>
-          {locale === "ar" ? "أ" : "A"}
+        <div className="header-avatar" aria-hidden="true">
+          <UserRound size={17} />
         </div>
       </div>
     </header>
-  );
-}
-
-function NotificationItem({
-  title,
-  time,
-  icon,
-  locale,
-}: {
-  title: string;
-  time: string;
-  icon: "payment" | "appointment" | "report";
-  locale: Locale;
-}) {
-  return (
-    <div className="notification-item">
-      <span className={cn("notification-item-icon", `notification-${icon}`)}>
-        {locale === "ar"
-          ? icon === "payment"
-            ? "ر.س"
-            : icon === "appointment"
-              ? "م"
-              : "ت"
-          : icon === "payment"
-            ? "SAR"
-            : icon === "appointment"
-              ? "A"
-              : "R"}
-      </span>
-      <div className="notification-item-copy">
-        <span>{title}</span>
-        <small>{time}</small>
-      </div>
-      <span className="notification-unread" />
-    </div>
   );
 }

@@ -39,7 +39,6 @@ export interface Branch {
 export interface DashboardMetric {
   id: "revenue" | "collected" | "appointments" | "newPatients" | "returningPatients";
   value: number;
-  change: number;
 }
 
 export interface BranchRevenue {
@@ -49,40 +48,23 @@ export interface BranchRevenue {
   collected: number;
 }
 
+export interface BranchDashboardOverview extends BranchRevenue {
+  appointments: number;
+  noShowRate: number;
+  occupancy: number;
+  pendingReports: number;
+}
+
 export interface AppointmentTrendPoint {
   label: string;
   appointments: number;
   completed: number;
 }
 
-export interface UpcomingAppointment {
-  id: string;
-  patient: string;
-  patientEn: string;
-  initials: string;
-  initialsEn: string;
-  service: string;
-  serviceEn: string;
-  therapist: string;
-  therapistEn: string;
-  time: string;
-  branchId: Exclude<BranchId, "all">;
-  status: "confirmed" | "checkedIn" | "inSession";
-  accent: "teal" | "blue" | "violet" | "amber";
-}
-
 export interface RecentActivity {
   id: string;
   branchId: Exclude<BranchId, "all">;
   type: "payment" | "patient" | "appointment" | "report";
-  titleAr: string;
-  titleEn: string;
-  detailAr: string;
-  detailEn: string;
-  timeAr: string;
-  timeEn: string;
-  initials: string;
-  initialsEn: string;
   accent: "teal" | "blue" | "violet" | "amber";
 }
 

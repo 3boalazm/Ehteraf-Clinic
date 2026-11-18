@@ -707,6 +707,11 @@ input:focus-visible {
   color: hsl(257 60% 55%);
 }
 
+.notification-demo {
+  background: hsl(var(--primary) / .1);
+  color: hsl(var(--primary));
+}
+
 .dark .notification-payment {
   background: hsl(173 35% 20%);
   color: hsl(173 75% 72%);
@@ -1225,16 +1230,6 @@ input:focus-visible {
   height: 7px;
   flex: 0 0 7px;
   border-radius: 50%;
-}
-
-.operations-live-indicator {
-  width: 8px;
-  height: 8px;
-  flex: 0 0 8px;
-  margin-top: 3px;
-  border-radius: 50%;
-  background: #35b780;
-  box-shadow: 0 0 0 4px hsl(151 55% 47% / 0.12);
 }
 
 .operations-stack {
