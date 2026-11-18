@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, CalendarDays, CreditCard, UserCheck, UsersRound, Wallet } from "lucide-react";
+import { CalendarDays, CreditCard, UserCheck, UsersRound, Wallet } from "lucide-react";
 import type { DashboardMetric, Locale } from "@/types";
 import { formatCurrency, formatNumber } from "@/lib/utils";
 import { Panel } from "@/components/ui/panel";
@@ -39,7 +39,6 @@ export function MetricGrid({
     appointmentsDescription: string;
     newPatientsDescription: string;
     returningPatientsDescription: string;
-    vsLastPeriod: string;
   };
 }) {
   const descriptions = {
@@ -78,13 +77,6 @@ export function MetricGrid({
               <strong className="metric-value" dir="auto">
                 {value}
               </strong>
-            </div>
-            <div className="metric-card-footer">
-              <span className="metric-change" dir="ltr">
-                <ArrowUpRight size={12} strokeWidth={2.4} />
-                {metric.change.toFixed(1)}%
-              </span>
-              <span>{labels.vsLastPeriod}</span>
             </div>
             <span className="metric-description">{descriptions[metric.id]}</span>
           </Panel>

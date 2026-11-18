@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { WorkspaceProvider, useWorkspace } from "@/components/workspace/workspace-provider";
@@ -25,10 +26,12 @@ export function AppShell({
 }
 
 function ShellFrame({ children }: { children: ReactNode }) {
-  const { mobileOpen, setMobileOpen, sidebarCollapsed } = useWorkspace();
+  const pathname = usePathname();
+  const { locale, mobileOpen, setMobileOpen, sidebarCollapsed } = useWorkspace();
+  const isDashboard = pathname.replace(/\/+$/, "") === `/${locale}/dashboard`;
 
   return (
-    <div className="app-frame">
+    <div className={cn("app-frame", isDashboard && "app-frame-spatial")}>
       <div className="app-layout">
         <AppSidebar />
         <div className={cn("app-content", sidebarCollapsed && "app-content-expanded")}>

@@ -1,5 +1,7 @@
 import type {
+  BranchDashboardOverview,
   BranchId,
+  BranchRevenue,
   DateRange,
   DashboardMetric,
   Locale,
@@ -24,7 +26,8 @@ export interface DashboardSnapshot {
   noShowRate: number;
   occupancy: number;
   pendingReports: number;
-  branchRevenue: ReturnType<typeof getBranchRevenue>;
+  branchRevenue: BranchRevenue[];
+  branchOverview: BranchDashboardOverview[];
   appointmentTrend: Array<{
     label: string;
     appointments: number;
@@ -36,25 +39,8 @@ export interface DashboardRepository {
   getOverview(query: DashboardQuery): DashboardSnapshot;
 }
 
-const rangeMultiplier: Record<DateRange, number> = {
-  week: 0.26,
-  month: 1,
-  quarter: 2.72,
-};
-
-const serviceMultiplier: Record<ServiceFilter, number> = {
-  all: 1,
-  orthopedic: 0.57,
-  sports: 0.26,
-  neurological: 0.17,
-};
-
-function round(value: number): number {
-  return Math.round(value);
-}
-
 export const mockDashboardRepository: DashboardRepository = {
-  getOverview({ branchId, range, service, locale }) {
+  getOverview({ branchId, locale }) {
     const selectedBranches =
       branchId === "all"
         ? Object.values(BRANCH_STATS)
@@ -83,7 +69,6 @@ export const mockDashboardRepository: DashboardRepository = {
       },
     );
 
-    const scopeFactor = rangeMultiplier[range] * serviceMultiplier[service];
     const noShowRate = base.appointments
       ? base.noShowWeighted / base.appointments
       : 0;
@@ -92,42 +77,37 @@ export const mockDashboardRepository: DashboardRepository = {
       : 0;
 
     const metrics: DashboardMetric[] = [
-      { id: "revenue", value: round(base.revenue * scopeFactor), change: 12.8 },
-      { id: "collected", value: round(base.collected * scopeFactor), change: 8.4 },
-      {
-        id: "appointments",
-        value: round(base.appointments * scopeFactor),
-        change: 6.2,
-      },
-      {
-        id: "newPatients",
-        value: round(base.newPatients * scopeFactor),
-        change: 11.3,
-      },
-      {
-        id: "returningPatients",
-        value: round(base.returningPatients * scopeFactor),
-        change: 9.1,
-      },
+      { id: "revenue", value: base.revenue },
+      { id: "collected", value: base.collected },
+      { id: "appointments", value: base.appointments },
+      { id: "newPatients", value: base.newPatients },
+      { id: "returningPatients", value: base.returningPatients },
     ];
 
-    const branchRevenue = getBranchRevenue(locale)
+    const branchOverview: BranchDashboardOverview[] = getBranchRevenue(locale)
       .filter((item) => branchId === "all" || item.branchId === branchId)
-      .map((item) => ({
-        ...item,
-        invoiced: round(item.invoiced * scopeFactor),
-        collected: round(item.collected * scopeFactor),
-      }));
+      .map((item) => {
+        const branch = BRANCH_STATS[item.branchId];
+        return {
+          ...item,
+          appointments: branch.appointments,
+          noShowRate: branch.noShowRate,
+          occupancy: branch.occupancy,
+          pendingReports: branch.pendingReports,
+        };
+      });
+    const branchRevenue: BranchRevenue[] = branchOverview.map((item) => ({
+      branchId: item.branchId,
+      branchName: item.branchName,
+      invoiced: item.invoiced,
+      collected: item.collected,
+    }));
 
-    const branchFactor =
-      branchId === "all"
-        ? 1
-        : BRANCH_STATS[branchId].appointments / BRANCH_STATS.ghadeer.appointments;
     const monthLabels = messages[locale].dashboard.months;
     const appointmentTrend = APPOINTMENT_TRENDS.map((point, index) => ({
       label: monthLabels[index],
-      appointments: round(point.appointments * branchFactor * serviceMultiplier[service]),
-      completed: round(point.completed * branchFactor * serviceMultiplier[service]),
+      appointments: point.appointments,
+      completed: point.completed,
     }));
 
     return {
@@ -136,6 +116,7 @@ export const mockDashboardRepository: DashboardRepository = {
       occupancy: Math.round(occupancy),
       pendingReports: base.pendingReports,
       branchRevenue,
+      branchOverview,
       appointmentTrend,
     };
   },

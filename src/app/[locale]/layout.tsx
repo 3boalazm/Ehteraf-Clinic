@@ -8,6 +8,7 @@ import "../globals.css";
 import "../clinic.css";
 import "../reference-theme.css";
 import "../module-suite.css";
+import "../spatial-dashboard.css";
 
 export const metadata: Metadata = {
   title: {

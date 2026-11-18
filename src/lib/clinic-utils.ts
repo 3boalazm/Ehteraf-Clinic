@@ -1,6 +1,6 @@
 import { BRANCHES } from "@/lib/mock/branches";
 import { CLINIC_SERVICES, CLINIC_THERAPISTS } from "@/lib/mock/clinic-seed";
-import type { BranchId, Locale } from "@/types";
+import type { BranchId, Locale, ServiceFilter } from "@/types";
 
 export function getBranchName(branchId: BranchId, locale: Locale): string {
   if (branchId === "all") {
@@ -14,6 +14,19 @@ export function getServiceName(serviceId: string, locale: Locale): string {
   const service = CLINIC_SERVICES.find((item) => item.id === serviceId);
   if (!service) return locale === "ar" ? "خدمة علاجية" : "Therapy service";
   return locale === "ar" ? service.nameAr : service.nameEn;
+}
+
+export function matchesServiceFilter(serviceId: string, filter: ServiceFilter): boolean {
+  if (filter === "all") return true;
+  const service = CLINIC_SERVICES.find((item) => item.id === serviceId);
+  if (!service) return false;
+  const category = service.categoryEn.toLocaleLowerCase("en-US");
+  const categoryKeyword = {
+    orthopedic: "orthopedic",
+    sports: "sports",
+    neurological: "neurological",
+  }[filter];
+  return category.includes(categoryKeyword);
 }
 
 export function getTherapistName(therapistId: string, locale: Locale): string {
