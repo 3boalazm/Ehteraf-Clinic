@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleHelp, HeartPulse } from "lucide-react";
+import { CircleHelp, HeartPulse, X } from "lucide-react";
 import { getNavigationForRole } from "@/lib/config/navigation";
 import { messages } from "@/lib/i18n/messages";
 import { useClinicData } from "@/services/clinic-data-provider";
@@ -51,6 +51,14 @@ export function AppSidebar() {
             <span className="brand-caption">{t.app.product}</span>
           </span>
         </Link>
+        <button
+          type="button"
+          className="sidebar-close-button"
+          onClick={() => setMobileOpen(false)}
+          aria-label={t.app.closeMenu}
+        >
+          <X size={18} aria-hidden="true" />
+        </button>
       </div>
 
       <nav className="sidebar-navigation">
