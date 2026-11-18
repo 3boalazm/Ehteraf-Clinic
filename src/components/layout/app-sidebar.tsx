@@ -12,19 +12,12 @@ import { useWorkspace } from "@/components/workspace/workspace-provider";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const {
-    locale,
-    role,
-    branchId,
-    sidebarCollapsed,
-    setSidebarCollapsed,
-    mobileOpen,
-    setMobileOpen,
-  } = useWorkspace();
+  const { locale, role, branchId, mobileOpen, setMobileOpen } = useWorkspace();
   const t = messages[locale];
   const { appointments } = useClinicData();
   const todayAppointmentCount = appointments.filter(
-    (appointment) => appointment.date === DEMO_TODAY &&
+    (appointment) =>
+      appointment.date === DEMO_TODAY &&
       (branchId === "all" || appointment.branchId === branchId) &&
       !["cancelled", "noShow"].includes(appointment.status),
   ).length;
@@ -34,12 +27,14 @@ export function AppSidebar() {
 
   return (
     <aside
+      id="primary-navigation"
       className={cn(
         "app-sidebar",
-        sidebarCollapsed && "app-sidebar-collapsed",
         mobileOpen ? "app-sidebar-mobile-open" : "app-sidebar-mobile-closed",
       )}
       aria-label={locale === "ar" ? "القائمة الرئيسية" : "Main navigation"}
+      aria-hidden={!mobileOpen}
+      inert={!mobileOpen}
     >
       <div className="sidebar-brand-row">
         <Link
@@ -71,13 +66,17 @@ export function AppSidebar() {
                   item.id === "dashboard"
                     ? pathname === href
                     : item.id === "clinical"
-                      ? pathname.startsWith(`/${locale}/clinical`) || pathname.startsWith(`/${locale}/treatment-plans`)
+                      ? pathname.startsWith(`/${locale}/clinical`) ||
+                        pathname.startsWith(`/${locale}/treatment-plans`)
                       : item.id === "services"
-                        ? pathname.startsWith(`/${locale}/services`) || pathname.startsWith(`/${locale}/packages`)
+                        ? pathname.startsWith(`/${locale}/services`) ||
+                          pathname.startsWith(`/${locale}/packages`)
                         : item.id === "employees"
-                          ? pathname.startsWith(`/${locale}/employees`) || pathname.startsWith(`/${locale}/hr`)
+                          ? pathname.startsWith(`/${locale}/employees`) ||
+                            pathname.startsWith(`/${locale}/hr`)
                           : pathname === href || pathname.startsWith(`${href}/`);
                 const Icon = item.icon;
+
                 return (
                   <li key={item.id}>
                     <Link
@@ -85,10 +84,14 @@ export function AppSidebar() {
                       onClick={() => setMobileOpen(false)}
                       className={cn("sidebar-link", active && "sidebar-link-active")}
                       aria-current={active ? "page" : undefined}
-                      aria-label={item.id === "appointments" && todayAppointmentCount > 0
-                        ? t.nav.appointmentsTodayCount.replace("{count}", formatNumber(todayAppointmentCount, locale))
-                        : undefined}
-                      title={sidebarCollapsed ? itemLabels[item.labelKey] : undefined}
+                      aria-label={
+                        item.id === "appointments" && todayAppointmentCount > 0
+                          ? t.nav.appointmentsTodayCount.replace(
+                              "{count}",
+                              formatNumber(todayAppointmentCount, locale),
+                            )
+                          : undefined
+                      }
                     >
                       <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
                       <span className="sidebar-link-label">
@@ -114,7 +117,9 @@ export function AppSidebar() {
         </div>
         <div className="sidebar-footer-copy">
           <span className="sidebar-footer-title">{t.app.help}</span>
-          <span className="sidebar-footer-subtitle">{t.app.demoModeDescription}</span>
+          <span className="sidebar-footer-subtitle">
+            {t.app.demoModeDescription}
+          </span>
         </div>
         <span className="demo-indicator" aria-label={t.app.demoMode} />
       </div>
