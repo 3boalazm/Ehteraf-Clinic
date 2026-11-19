@@ -1,10 +1,10 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { AppointmentBookingPage } from "@/features/appointments/appointment-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { AppointmentBooking } from "@/features/appointments/appointments";
 
-export default function NewAppointmentRoute() {
+export default function Route() {
   return (
     <FeatureGate module="appointments">
-      <AppointmentBookingPage />
+      <AppointmentBooking />
     </FeatureGate>
   );
 }

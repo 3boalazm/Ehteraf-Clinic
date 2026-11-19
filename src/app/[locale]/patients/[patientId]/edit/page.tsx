@@ -1,7 +1,7 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { PatientEditor } from "@/features/patients/patient-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { PatientForm } from "@/features/patients/patients";
 
-export default async function EditPatientRoute({
+export default async function Route({
   params,
 }: {
   params: Promise<{ patientId: string }>;
@@ -9,7 +9,7 @@ export default async function EditPatientRoute({
   const { patientId } = await params;
   return (
     <FeatureGate module="patients">
-      <PatientEditor patientId={patientId} />
+      <PatientForm patientId={patientId} />
     </FeatureGate>
   );
 }

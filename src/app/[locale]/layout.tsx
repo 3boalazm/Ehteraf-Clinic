@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import "@fontsource-variable/inter/standard.css";
-import "@fontsource/ibm-plex-sans-arabic/arabic.css";
-import { ApplicationShell } from "@/components/layout/application-shell";
+import "@fontsource/ibm-plex-sans-arabic/arabic-400.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-500.css";
+import "@fontsource/ibm-plex-sans-arabic/arabic-600.css";
+import { AppShell } from "@/shell/app-shell";
 import type { Locale } from "@/types";
 import "../globals.css";
-import "../design-system.css";
 
 export const metadata: Metadata = {
   title: {
@@ -22,8 +23,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f7f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#11161b" },
+    { media: "(prefers-color-scheme: light)", color: "#d9dad5" },
+    { media: "(prefers-color-scheme: dark)", color: "#060607" },
   ],
 };
 
@@ -45,10 +46,10 @@ export default async function LocaleRootLayout({
 
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
-      <body className="font-sans antialiased">
-        <ApplicationShell locale={locale as Locale}>
+      <body>
+        <AppShell locale={locale as Locale}>
           {children}
-        </ApplicationShell>
+        </AppShell>
       </body>
     </html>
   );

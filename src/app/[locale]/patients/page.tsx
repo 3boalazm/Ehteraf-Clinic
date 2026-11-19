@@ -1,7 +1,7 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { PatientDirectory } from "@/features/patients/patient-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { PatientDirectory } from "@/features/patients/patients";
 
-export default function PatientsRoute() {
+export default function Route() {
   return (
     <FeatureGate module="patients">
       <PatientDirectory />
