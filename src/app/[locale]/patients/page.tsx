@@ -1,10 +1,10 @@
-import { ModuleGate } from "@/components/modules/module-gate";
-import { PatientDirectory } from "@/components/patients/patient-directory";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { PatientDirectory } from "@/features/patients/patient-pages";
 
 export default function PatientsRoute() {
   return (
-    <ModuleGate module="patients" path="patients">
+    <FeatureGate module="patients">
       <PatientDirectory />
-    </ModuleGate>
+    </FeatureGate>
   );
 }

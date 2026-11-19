@@ -1,5 +1,5 @@
-import { ModuleGate } from "@/components/modules/module-gate";
-import { PatientEditor } from "@/components/patients/patient-editor";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { PatientEditor } from "@/features/patients/patient-pages";
 
 export default async function EditPatientRoute({
   params,
@@ -8,8 +8,8 @@ export default async function EditPatientRoute({
 }) {
   const { patientId } = await params;
   return (
-    <ModuleGate module="patients" path={`patients/${patientId}/edit`}>
+    <FeatureGate module="patients">
       <PatientEditor patientId={patientId} />
-    </ModuleGate>
+    </FeatureGate>
   );
 }

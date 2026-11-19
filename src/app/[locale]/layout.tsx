@@ -2,14 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import "@fontsource-variable/inter/standard.css";
 import "@fontsource/ibm-plex-sans-arabic/arabic.css";
-import { AppShell } from "@/components/layout/app-shell";
+import { ApplicationShell } from "@/components/layout/application-shell";
 import type { Locale } from "@/types";
 import "../globals.css";
-import "../clinic.css";
-import "../reference-theme.css";
-import "../module-suite.css";
-import "../spatial-dashboard.css";
-import "../ui-system.css";
+import "../design-system.css";
 
 export const metadata: Metadata = {
   title: {
@@ -50,7 +46,9 @@ export default async function LocaleRootLayout({
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
       <body className="font-sans antialiased">
-        <AppShell locale={locale as Locale}>{children}</AppShell>
+        <ApplicationShell locale={locale as Locale}>
+          {children}
+        </ApplicationShell>
       </body>
     </html>
   );

@@ -1,5 +1,10 @@
-import { CalendarPage } from "@/components/appointments/calendar-page";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { AppointmentCalendarPage } from "@/features/appointments/appointment-pages";
 
 export default function CalendarRoute() {
-  return <CalendarPage />;
+  return (
+    <FeatureGate module="appointments">
+      <AppointmentCalendarPage />
+    </FeatureGate>
+  );
 }

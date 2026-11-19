@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ModuleGate } from "@/components/modules/module-gate";
-import { ModuleWorkspacePage } from "@/components/modules/module-workspace";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { ModuleWorkspacePage } from "@/features/workspaces/module-workspace";
 import { getModuleFromPath } from "@/lib/config/navigation";
 
 export default async function ModuleRoute({
@@ -10,14 +10,13 @@ export default async function ModuleRoute({
 }) {
   const { locale, slug } = await params;
   if (locale !== "ar" && locale !== "en") notFound();
-
   const path = slug.join("/");
   const moduleId = getModuleFromPath(path);
-  if (!moduleId || moduleId === "appointments" || moduleId === "patients") notFound();
-
+  if (!moduleId || moduleId === "appointments" || moduleId === "patients")
+    notFound();
   return (
-    <ModuleGate module={moduleId} path={path}>
+    <FeatureGate module={moduleId}>
       <ModuleWorkspacePage key={path} module={moduleId} path={path} />
-    </ModuleGate>
+    </FeatureGate>
   );
 }

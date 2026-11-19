@@ -1,5 +1,5 @@
-import { ModuleGate } from "@/components/modules/module-gate";
-import { BookingForm } from "@/components/appointments/booking-form";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { AppointmentBookingPage } from "@/features/appointments/appointment-pages";
 
 export default async function RescheduleAppointmentRoute({
   params,
@@ -8,8 +8,8 @@ export default async function RescheduleAppointmentRoute({
 }) {
   const { appointmentId } = await params;
   return (
-    <ModuleGate module="appointments" path={`appointments/${appointmentId}/reschedule`}>
-      <BookingForm appointmentId={appointmentId} />
-    </ModuleGate>
+    <FeatureGate module="appointments">
+      <AppointmentBookingPage appointmentId={appointmentId} />
+    </FeatureGate>
   );
 }

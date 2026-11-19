@@ -1,10 +1,10 @@
-import { ModuleGate } from "@/components/modules/module-gate";
-import { AppointmentsPage } from "@/components/appointments/appointments-page";
+import { FeatureGate } from "@/components/layout/feature-gate";
+import { AppointmentListPage } from "@/features/appointments/appointment-pages";
 
 export default function AppointmentsRoute() {
   return (
-    <ModuleGate module="appointments" path="appointments">
-      <AppointmentsPage />
-    </ModuleGate>
+    <FeatureGate module="appointments">
+      <AppointmentListPage />
+    </FeatureGate>
   );
 }
