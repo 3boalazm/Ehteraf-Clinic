@@ -230,17 +230,17 @@ export function PatientDirectory() {
                             </div>
                           </div>
                         </td>
-                        <td>
+                        <td data-label={p.contact}>
                           <span dir="ltr">{item.phone}</span>
                           <span className="sub">{item.email}</span>
                         </td>
-                        <td>{getBranchName(item.branchId, locale)}</td>
-                        <td>{item.lastVisit ? formatDate(item.lastVisit, locale) : p.noVisit}</td>
-                        <td>
+                        <td data-label={p.branch}>{getBranchName(item.branchId, locale)}</td>
+                        <td data-label={p.lastVisit}>{item.lastVisit ? formatDate(item.lastVisit, locale) : p.noVisit}</td>
+                        <td data-label={p.sessions}>
                           {formatNumber(item.sessionsRemaining, locale)}
                           <span className="sub">{p.sessionsRemaining}</span>
                         </td>
-                        <td>
+                        <td data-label={p.status}>
                           <Badge tone={item.status === "active" ? "mint" : "sand"}>
                             {item.status === "active" ? p.activeStatus : p.inactiveStatus}
                           </Badge>
@@ -669,7 +669,7 @@ export function PatientProfile({ patientId }: { patientId: string }) {
         <StatCard className="span-3 lg-6" label={c.totalSessions} value={formatNumber(patient.sessionsTotal, locale)} />
         <StatCard className="span-3 lg-6" tone="lime" label={c.remainingSessions} value={formatNumber(patient.sessionsRemaining, locale)} />
         <StatCard
-          className="span-3 lg-6"
+          className="span-3 lg-6 m-full"
           tone="lilac"
           label={c.appointments}
           value={formatNumber(history.length, locale)}

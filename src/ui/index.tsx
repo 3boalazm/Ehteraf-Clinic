@@ -401,7 +401,7 @@ export function StatCard({
   className?: string;
 }) {
   return (
-    <Card tone={tone} className={className}>
+    <Card tone={tone} className={cx('stat-card', className)}>
       <div className="row row--between">
         <span className="t-label">{label}</span>
         {icon ? <Bubble tone={tone && tone !== "soft" ? "glass" : undefined}>{icon}</Bubble> : null}
