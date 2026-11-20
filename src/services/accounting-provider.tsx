@@ -29,6 +29,7 @@ import {
 } from "@/lib/mock/accounting-data";
 import { addDays } from "@/lib/dates";
 import { CLINIC_SERVICES, CLINIC_THERAPISTS } from "@/lib/mock/clinic-seed";
+import { useHr } from "@/services/hr-provider";
 
 const STORAGE_KEY = "ehteraf:accounting:v1";
 
@@ -119,7 +120,8 @@ export function AccountingProvider({ children }: { children: ReactNode }) {
     }
   }, [seed, closedDays, hydrated]);
 
-  const entries = useMemo(() => buildEntries(seed), [seed]);
+  const { postedPayroll } = useHr();
+  const entries = useMemo(() => buildEntries(seed, postedPayroll), [seed, postedPayroll]);
 
   const nextSerial = (prefix: string, ids: string[]) => {
     const max = ids
