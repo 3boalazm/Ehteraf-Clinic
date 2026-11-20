@@ -329,7 +329,7 @@ function RecordsWorkspace({ workspaceKey }: { workspaceKey: WorkspaceKey }) {
             <Empty icon={<Inbox />} title={copy.noResultsTitle} description={copy.noResultsDescription} />
           ) : (
             <div className="table-wrap">
-              <table className="table" style={{ minWidth: 540 }}>
+              <table className="table">
                 <thead>
                   <tr>
                     <th>{copy.record}</th>
@@ -354,14 +354,14 @@ function RecordsWorkspace({ workspaceKey }: { workspaceKey: WorkspaceKey }) {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td data-label={copy.category}>
                         {app.pick(row.categoryAr, row.categoryEn)}
                         {row.branchId ? <span className="sub">{getBranchName(row.branchId, locale)}</span> : null}
                       </td>
-                      <td>
+                      <td data-label={copy.value}>
                         <b style={{ fontWeight: 550 }}>{valueOf(row)}</b>
                       </td>
-                      <td>
+                      <td data-label={copy.status}>
                         <Badge tone={STATUS_TONES[row.status]}>{copy.statuses[row.status]}</Badge>
                       </td>
                       <td>

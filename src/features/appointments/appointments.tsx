@@ -245,19 +245,19 @@ export function AppointmentsList() {
                             </div>
                           </Link>
                         </td>
-                        <td>
+                        <td data-label={a.service}>
                           {getServiceName(item.serviceId, locale)}
                           <span className="sub">
                             {item.visitType === "home" ? a.visitHome : a.visitClinic} ·{" "}
                             {formatNumber(item.durationMinutes, locale)} {t.clinic.common.min}
                           </span>
                         </td>
-                        <td>
+                        <td data-label={a.dateTime}>
                           <b style={{ fontWeight: 550 }}>{formatTime(item.time, locale)}</b>
                           <span className="sub">{formatDate(item.date, locale)}</span>
                         </td>
-                        <td>{getBranchName(item.branchId, locale)}</td>
-                        <td>
+                        <td data-label={a.branch}>{getBranchName(item.branchId, locale)}</td>
+                        <td data-label={a.status}>
                           <Badge tone={STATUS_TONE[item.status]}>{labels[item.status]}</Badge>
                         </td>
                         <td>
@@ -803,7 +803,7 @@ export function AppointmentCalendar() {
         </Card>
 
         <div className="span-4 stack" style={{ gap: 14 }}>
-          <Card>
+          <Card className="cal-mini">
             <MiniCalendar
               month={month}
               selected={selected}

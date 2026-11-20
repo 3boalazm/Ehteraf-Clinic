@@ -200,7 +200,7 @@ function TopBar() {
         ))}
       </Select>
 
-      <IconButton label={app.t.app.language} href={`/${[otherLocale, ...rest].join("/")}`}>
+      <IconButton className="topbar__lang" label={app.t.app.language} href={`/${[otherLocale, ...rest].join("/")}`}>
         <Languages />
       </IconButton>
       {canAccessModule(app.role, "notifications") ? (
