@@ -155,7 +155,7 @@ export function Dashboard() {
         <Card className="hero span-7">
           <Image
             className="hero__img"
-            src="/images/ehteraf-therapy-hero.jpg"
+            src="/images/ehteraf-dashboard-doctor.jpg"
             alt=""
             fill
             priority
