@@ -17,6 +17,7 @@ import {
 import { getNavigationForRole } from "@/lib/config/navigation";
 import { canAccessModule, ROLE_BRANCH_SCOPE, ROLE_IDS } from "@/lib/config/roles";
 import { BRANCHES } from "@/lib/mock/branches";
+import { AccountingProvider } from "@/services/accounting-provider";
 import { ClinicDataProvider } from "@/services/clinic-data-provider";
 import { WorkspaceProvider } from "@/state/workspace-provider";
 import { useApp } from "@/shell/use-app";
@@ -27,6 +28,7 @@ export function AppShell({ locale, children }: { locale: Locale; children: React
   return (
     <WorkspaceProvider locale={locale}>
       <ClinicDataProvider>
+        <AccountingProvider>
         <div className="app">
           <div className="frame">
             <Rail />
@@ -36,6 +38,7 @@ export function AppShell({ locale, children }: { locale: Locale; children: React
             </div>
           </div>
         </div>
+        </AccountingProvider>
       </ClinicDataProvider>
     </WorkspaceProvider>
   );

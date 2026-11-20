@@ -2,6 +2,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Landmark,
   BriefcaseBusiness,
   CalendarDays,
   CreditCard,
@@ -99,6 +100,13 @@ export const NAVIGATION: NavigationSection[] = [
         module: "finance",
       },
       {
+        id: "accounting",
+        labelKey: "accounting",
+        href: "/accounting",
+        icon: Landmark,
+        module: "finance",
+      },
+      {
         id: "inventory",
         labelKey: "inventory",
         href: "/inventory",
@@ -189,6 +197,7 @@ export function getModuleFromPath(path: string): ModuleId | null {
     case "packages":
       return "services";
     case "finance":
+    case "accounting":
       return "finance";
     case "inventory":
     case "procurement":
