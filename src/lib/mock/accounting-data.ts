@@ -2,6 +2,7 @@ import { addDays } from "@/lib/dates";
 import { BRANCHES } from "@/lib/mock/branches";
 import { CLINIC_SERVICES, CLINIC_THERAPISTS, DEMO_TODAY, SEED_PATIENTS } from "@/lib/mock/clinic-seed";
 import { BRANCH_STATS } from "@/lib/mock/dashboard-data";
+import type { PostedPayroll } from "@/lib/mock/hr-data";
 import type { BranchId } from "@/types";
 
 /* ==========================================================================
@@ -426,12 +427,18 @@ export function createAccountingSeed(): AccountingSeed {
 
 const cashAccount = (method: PaymentMethod) => (method === "cash" ? "1100" : "1120");
 
+function addMonthsIso(month: string, delta: number): string {
+  const [year = 0, mon = 1] = month.split("-").map(Number);
+  const date = new Date(Date.UTC(year, mon - 1 + delta, 1));
+  return date.toISOString().slice(0, 7);
+}
+
 function line(account: string, debit: number, credit: number): JournalLine {
   return { account, debit: round2(debit), credit: round2(credit) };
 }
 
 /** Turns source documents and recurring runs into balanced journal entries. */
-export function buildEntries(docs: Pick<AccountingSeed, "invoices" | "bills" | "manual">): JournalEntry[] {
+export function buildEntries(docs: Pick<AccountingSeed, "invoices" | "bills" | "manual">, payroll: PostedPayroll[] = []): JournalEntry[] {
   const entries: Omit<JournalEntry, "id">[] = [];
   const push = (entry: Omit<JournalEntry, "id">) => {
     if (entry.date <= TODAY) entries.push(entry);
@@ -463,33 +470,7 @@ export function buildEntries(docs: Pick<AccountingSeed, "invoices" | "bills" | "
       ],
     });
 
-    MONTHS.forEach((month, monthIndex) => {
-      const gross = Math.round((BRANCH_STATS[branchId].revenue * at(GROWTH, monthIndex) * 0.38) / 10) * 10;
-      const employer = round2(gross * 0.1);
-      const employee = round2(gross * 0.09);
-      push({
-        date: `${month}-15`,
-        branchId,
-        kind: "payroll",
-        memoAr: `مسير رواتب ${month}`,
-        memoEn: `Payroll run ${month}`,
-        ref: `PAY-${BRANCH_CODE[branchId]}-${month}`,
-        source: "auto",
-        lines: [line("5100", gross, 0), line("5110", employer, 0), line("1120", 0, gross - employee), line("2210", 0, employer + employee)],
-      });
-      if (monthIndex > 0) {
-        const prevGross = Math.round((BRANCH_STATS[branchId].revenue * at(GROWTH, monthIndex - 1) * 0.38) / 10) * 10;
-        const settle = round2(prevGross * 0.19);
-        push({
-          date: `${month}-05`,
-          branchId,
-          kind: "gosi",
-          memoAr: `سداد التأمينات الاجتماعية لشهر ${at(MONTHS, monthIndex - 1)}`,
-          memoEn: `GOSI settlement for ${at(MONTHS, monthIndex - 1)}`,
-          source: "auto",
-          lines: [line("2210", settle, 0), line("1120", 0, settle)],
-        });
-      }
+    MONTHS.forEach((month) => {
       const rentNet = RENT[branchId];
       push({
         date: `${month}-01`,
@@ -540,6 +521,36 @@ export function buildEntries(docs: Pick<AccountingSeed, "invoices" | "bills" | "
           lines: [line("5300", used, 0), line("1300", 0, used)],
         });
       }
+    });
+  }
+
+  // Payroll posted from the HR module: salaries, employer GOSI, net paid from bank, GOSI payable.
+  for (const run of payroll) {
+    const employerAndEmployee = run.gosiEmployer + run.gosiEmployee;
+    push({
+      date: run.date,
+      branchId: run.branchId,
+      kind: "payroll",
+      memoAr: `مسير رواتب ${run.month}`,
+      memoEn: `Payroll run ${run.month}`,
+      ref: `PAY-${BRANCH_CODE[run.branchId]}-${run.month}`,
+      source: "auto",
+      lines: [
+        line("5100", run.salaryExpense, 0),
+        line("5110", run.gosiEmployer, 0),
+        line("1120", 0, run.salaryExpense - run.gosiEmployee),
+        line("2210", 0, employerAndEmployee),
+      ],
+    });
+    const nextMonth = addMonthsIso(run.month, 1);
+    push({
+      date: `${nextMonth}-05`,
+      branchId: run.branchId,
+      kind: "gosi",
+      memoAr: `سداد التأمينات الاجتماعية لشهر ${run.month}`,
+      memoEn: `GOSI settlement for ${run.month}`,
+      source: "auto",
+      lines: [line("2210", employerAndEmployee, 0), line("1120", 0, employerAndEmployee)],
     });
   }
 

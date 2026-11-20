@@ -123,7 +123,7 @@ export const NAVIGATION: NavigationSection[] = [
       {
         id: "employees",
         labelKey: "employees",
-        href: "/employees",
+        href: "/hr",
         icon: BriefcaseBusiness,
         module: "employees",
       },
