@@ -1,7 +1,7 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { AppointmentBookingPage } from "@/features/appointments/appointment-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { AppointmentBooking } from "@/features/appointments/appointments";
 
-export default async function RescheduleAppointmentRoute({
+export default async function Route({
   params,
 }: {
   params: Promise<{ appointmentId: string }>;
@@ -9,7 +9,7 @@ export default async function RescheduleAppointmentRoute({
   const { appointmentId } = await params;
   return (
     <FeatureGate module="appointments">
-      <AppointmentBookingPage appointmentId={appointmentId} />
+      <AppointmentBooking appointmentId={appointmentId} />
     </FeatureGate>
   );
 }

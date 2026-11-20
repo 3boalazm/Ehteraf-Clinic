@@ -1,10 +1,10 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { PatientEditor } from "@/features/patients/patient-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { PatientForm } from "@/features/patients/patients";
 
-export default function NewPatientRoute() {
+export default function Route() {
   return (
     <FeatureGate module="patients">
-      <PatientEditor />
+      <PatientForm />
     </FeatureGate>
   );
 }

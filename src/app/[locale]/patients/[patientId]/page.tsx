@@ -1,7 +1,7 @@
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { PatientProfile } from "@/features/patients/patient-pages";
+import { FeatureGate } from "@/shell/app-shell";
+import { PatientProfile } from "@/features/patients/patients";
 
-export default async function PatientProfileRoute({
+export default async function Route({
   params,
 }: {
   params: Promise<{ patientId: string }>;

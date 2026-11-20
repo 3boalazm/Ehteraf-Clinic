@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { FeatureGate } from "@/components/layout/feature-gate";
-import { ModuleWorkspacePage } from "@/features/workspaces/module-workspace";
+import { FeatureGate } from "@/shell/app-shell";
+import { WorkspacePage } from "@/features/workspaces/workspace";
 import { getModuleFromPath } from "@/lib/config/navigation";
 
 export default async function ModuleRoute({
@@ -16,7 +16,7 @@ export default async function ModuleRoute({
     notFound();
   return (
     <FeatureGate module={moduleId}>
-      <ModuleWorkspacePage key={path} module={moduleId} path={path} />
+      <WorkspacePage key={path} path={path} />
     </FeatureGate>
   );
 }

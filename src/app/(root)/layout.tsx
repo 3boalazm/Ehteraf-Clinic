@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "../design-system.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "Ehteraf Clinic | احتراف",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f5f2ea",
+  themeColor: "#d9dad5",
 };
 
 export default function RootRedirectLayout({
@@ -17,7 +17,7 @@ export default function RootRedirectLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className="font-sans antialiased">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

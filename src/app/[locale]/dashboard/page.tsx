@@ -1,5 +1,5 @@
-import { CommandCenter } from "@/features/dashboard/command-center";
+import { Dashboard } from "@/features/dashboard/dashboard";
 
-export default function DashboardRoute() {
-  return <CommandCenter />;
+export default function Route() {
+  return <Dashboard />;
 }
